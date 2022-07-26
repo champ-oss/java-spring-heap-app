@@ -18,7 +18,7 @@ do
   echo "gzip hprof file"
   gzip \$hprof_file
   echo "aws cp file to s3 bucket"
-  aws s3 cp *.gz s3://\$AWS_S3_BUCKETNAME/\$APP_NAME/\$(date +%Y-%m-%dT%H:%M:%S)/
+  aws s3 cp *.gz s3://\$AWS_S3_BUCKETNAME/java_heap_dump/\$APP_NAME/\$(date +%Y-%m-%dT%H:%M:%S)/
   echo "aws cp file complete"
 done
 EOF
