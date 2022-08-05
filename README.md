@@ -28,7 +28,7 @@ Assumptions include you have existing s3 bucket already created and iam auth key
 
 * mvn package
 * docker build -t cloud/test-hello-world:1.0.0 --build-arg JAR_FILE=target/HelloWorldController-0.0.1-SNAPSHOT.jar --no-cache .
-* docker run -e AWS_ACCESS_KEY_ID='' -e AWS_SECRET_ACCESS_KEY='' -e AWS_S3_BUCKETNAME="java-spring-heap-app" -d -p 8082:8080 <hash>
+* docker run -e AWS_ACCESS_KEY_ID='' -e AWS_SECRET_ACCESS_KEY='' -e AWS_S3_BUCKETNAME="java-spring-heap-app" -e JAVA_HEAP_OOM_ENABLED=true -d -p 8082:8080 <hash>
 * local browser hit endpoint 127.0.0.1:8082/hello or curl 127.0.0.1:8082/hello
 * validate hprof gz file is located in s3://$AWS_S3_BUCKETNAME/$APP_NAME/${date}/
 

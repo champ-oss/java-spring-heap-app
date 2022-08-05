@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ] ; then
@@ -6,7 +6,7 @@ if [ "${1#-}" != "$1" ] ; then
 fi
 
 ## check to see if AWS_S3_BUCKETNAME is defined and JAVA_HEAP_OOM_ENABLED is set to true
-if [ -n "${AWS_S3_BUCKETNAME}" ] && [ "${JAVA_HEAP_OOM_ENABLED}" == "true" ]; then
+if [ -n "${AWS_S3_BUCKETNAME}" ] && [ "${JAVA_HEAP_OOM_ENABLED}" = true ] ; then
 
 # creating directory just in case app is running at different path
 mkdir -p /srv/app/
@@ -20,6 +20,8 @@ do
   echo "aws cp file to s3 bucket"
   aws s3 cp *.gz s3://\$AWS_S3_BUCKETNAME/java_heap_dump/\$APP_NAME/\$(date +%Y-%m-%dT%H:%M:%S)/
   echo "aws cp file complete"
+  echo "killing java process"
+  killalljobs() { for pid in $( jobs -p ); do kill -9 $pid ; done ; }
 done
 EOF
 
@@ -28,7 +30,7 @@ EOF
   # used in bash script for s3 directory
   export APP_NAME=java-spring-heap-app
   # pass heap out of memory variable to java startup
-  HEAP_OOM="-XX:+HeapDumpOnOutOfMemoryError -XX:OnOutOfMemoryError=/srv/app/upload_java_heap_dump_s3.sh; kill -9 %p"
+  HEAP_OOM="-XX:+HeapDumpOnOutOfMemoryError -XX:OnOutOfMemoryError=/srv/app/upload_java_heap_dump_s3.sh"
 
 else
   echo "AWS_S3_BUCKETNAME not set, run as normal"
