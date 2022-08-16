@@ -1,12 +1,12 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ] ; then
 	set -- "$@"
 fi
 
-## check to see if AWS_S3_BUCKETNAME is defined
-if [ -n "${AWS_S3_BUCKETNAME}" ] ; then
+## check to see if AWS_S3_BUCKETNAME is defined and JAVA_HEAP_OOM_ENABLED is set to true
+if [ -n "${AWS_S3_BUCKETNAME}" ] && [ "${JAVA_HEAP_OOM_ENABLED}" = true ] ; then
 
 # creating directory just in case app is running at different path
 mkdir -p /srv/app/
@@ -20,6 +20,8 @@ do
   echo "aws cp file to s3 bucket"
   aws s3 cp *.gz s3://\$AWS_S3_BUCKETNAME/java_heap_dump/\$APP_NAME/\$(date +%Y-%m-%dT%H:%M:%S)/
   echo "aws cp file complete"
+  echo "killing java process"
+  killalljobs() { for pid in $( jobs -p ); do kill -9 $pid ; done ; }
 done
 EOF
 
